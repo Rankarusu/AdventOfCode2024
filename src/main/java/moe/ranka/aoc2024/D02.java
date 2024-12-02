@@ -1,6 +1,7 @@
 package moe.ranka.aoc2024;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public class D02 extends Day {
 
@@ -12,7 +13,7 @@ public class D02 extends Day {
 
         for (String reading : readings) {
             var levels = Arrays.stream(reading.split(" ")).mapToInt(Integer::parseInt).toArray();
-            if (analyzeLevels(levels)){
+            if (analyzeLevels(levels)) {
                 safeReports++;
             }
         }
@@ -30,10 +31,10 @@ public class D02 extends Day {
 
             lastDiff = diff;
 
-            if (absDiff > 3 || absDiff < 1){
+            if (absDiff > 3 || absDiff < 1) {
                 return false;
             }
-            if ((diff > 0 && tempLastDiff < 0) || (diff < 0 && tempLastDiff > 0)){
+            if ((diff > 0 && tempLastDiff < 0) || (diff < 0 && tempLastDiff > 0)) {
                 return false;
             }
         }
@@ -42,8 +43,29 @@ public class D02 extends Day {
 
     @Override
     public void part2() {
-        // TODO Auto-generated method stub
+        var file = this.readFile("02.txt");
+        var readings = file.split("\n");
+        int safeReports = 0;
 
+        for (String reading : readings) {
+            var levels = Arrays.stream(reading.split(" ")).mapToInt(Integer::parseInt).toArray();
+
+            for (int i = 0; i < levels.length; i++) {
+                int localI = i;
+                var rangeWithoutI = IntStream.range(0, levels.length)
+                        .filter(x -> x != localI)
+                        .map(x -> levels[x])
+                        .toArray();
+
+                boolean isSafe = analyzeLevels(rangeWithoutI);
+
+                if (isSafe) {
+                    safeReports++;
+                    break;
+                }
+            }
+        }
+        System.out.println(safeReports);
     }
 
 }
