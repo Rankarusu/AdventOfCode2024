@@ -1,6 +1,7 @@
 package moe.ranka.aoc2024;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class D04 extends Day {
 
@@ -97,8 +98,41 @@ public class D04 extends Day {
 
   @Override
   public void part2() {
-    // TODO Auto-generated method stub
+    var lines = readFile("04.txt").split("\n");
+    char[][] map = Arrays.stream(lines).map(String::toCharArray).toArray(char[][]::new);
+    int counter = 0;
 
+    for (int i = 0; i < map.length; i++) {
+      for (int j = 0; j < map[0].length; j++) {
+        if (checkPoint2(i, j, map)) {
+          counter++;
+        }
+      }
+    }
+    System.out.println(counter);
+  }
+
+  private List<String> winningString = Arrays.asList(
+      "SMSM", "MSMS", "SSMM", "MMSS");
+
+  private boolean checkPoint2(int x, int y, char[][] grid) {
+    if (grid[x][y] != 'A') {
+      // we only need to start on points with starting letters
+      return false;
+    }
+    var sb = new StringBuilder();
+
+    for (int i = -1; i <= 1; i += 2) {
+      for (int j = -1; j <= 1; j += 2) {
+        var newX = x + j;
+        var newY = y + i;
+        if (isOutOfBounds(newX, newY, grid)) {
+          return false;
+        }
+        sb.append((grid[newX][newY]));
+      }
+    }
+    return winningString.contains(sb.toString());
   }
 
 }
