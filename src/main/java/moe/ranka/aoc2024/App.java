@@ -2,6 +2,6 @@ package moe.ranka.aoc2024;
 
 public class App {
     public static void main(String[] args) {
-        new D03().run();
+        new D04().run();
     }
 }
