@@ -64,6 +64,39 @@ public class D08 extends Day {
             return res;
         }
 
+        public List<Node> getAntiNodeLocations2(Node node, char[][] map) {
+            if (node.signal != signal) {
+                throw new RuntimeException("signals nor equal");
+            }
+
+            List<Node> res = new ArrayList<>();
+            res.add(this);
+            res.add(node);
+
+            int i = 1;
+            while (true) {
+
+                int diffY = (y - node.y) * i;
+                int diffX = (x - node.x) * i;
+
+                if (isOutOfBounds(node.x - diffX, node.y - diffY, map)
+                        && isOutOfBounds(x + diffX, y + diffY, map)) {
+                    break;
+                }
+                if (!isOutOfBounds(node.x - diffX, node.y - diffY, map)) {
+
+                    res.add(new Node(node.x - diffX, node.y - diffY, signal));
+                }
+
+                if (!isOutOfBounds(x + diffX, y + diffY, map)) {
+                    res.add(new Node(x + diffX, y + diffY, signal));
+
+                }
+                i++;
+            }
+            return res;
+        }
+
         private D08 getEnclosingInstance() {
             return D08.this;
         }
@@ -96,12 +129,12 @@ public class D08 extends Day {
             }
         }
         var res = antiNodes.stream().filter(x -> !isOutOfBounds(x.x, x.y, map)).toList();
-        for (Node node : res) {
-            map[node.y][node.x] = '#';
-        }
-        for (int i = 0; i < map.length; i++) {
-            System.out.println(String.valueOf(map[i]));
-        }
+        // for (Node node : res) {
+        //     map[node.y][node.x] = '#';
+        // }
+        // for (int i = 0; i < map.length; i++) {
+        //     System.out.println(String.valueOf(map[i]));
+        // }
         System.out.println(res.size());
     }
 
@@ -111,7 +144,37 @@ public class D08 extends Day {
 
     @Override
     public void part2() {
-        // TODO Auto-generated method stub
+        var lines = this.readFile("08.txt").split("\n");
+        char[][] map = Arrays.stream(lines).map(String::toCharArray).toArray(char[][]::new);
+        Map<Character, List<Node>> nodes = new HashMap<>();
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                char signal = map[j][i];
+                if (signal != '.') {
+                    nodes.putIfAbsent(signal, new ArrayList<>());
+                    nodes.get(signal).add(new Node(i, j, signal));
+                }
+            }
+        }
+        Set<Node> antiNodes = new HashSet<>();
+        for (Character key : nodes.keySet()) {
+            var values = nodes.get(key);
+            for (int i = 0; i < values.size(); i++) {
+                for (int j = i + 1; j < values.size(); j++) {
+                    Node a = values.get(i);
+                    Node b = values.get(j);
+                    antiNodes.addAll(a.getAntiNodeLocations2(b, map));
+                }
+            }
+        }
+        var res = antiNodes.stream().filter(x -> !isOutOfBounds(x.x, x.y, map)).toList();
+        // for (Node node : res) {
+        //     map[node.y][node.x] = '#';
+        // }
+        // for (int i = 0; i < map.length; i++) {
+        //     System.out.println(String.valueOf(map[i]));
+        // }
+        System.out.println(res.size());
 
     }
 
